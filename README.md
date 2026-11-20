@@ -16,7 +16,7 @@
 هاي النسخة الأولى (الطبقة 1): استخراج النص من الفيديو، وحرق الترجمة.
 
 ### 2. فيديو قبل وبعد
-(صورة لاحقاً)
+![قبل وبعد: نفس الفيديو بدون ترجمة، ومعه ترجمة إنجليزية بالنص وعربية تحت، محروقة على الفيديو](docs/before-after.png)
 
 ### 3. التنزيل وفتح PowerShell
 1. بصفحة الريبو على GitHub: اكبس على زر Code، وبعدين Download ZIP.
@@ -127,7 +127,7 @@ Small PowerShell tools for Windows that turn the speech in a video into text and
 This first version (layer 1): text from the video, and burned captions.
 
 ### 2. Before and after
-(image later)
+![Before and after: the same video without captions, then with English captions in the middle and Arabic captions at the bottom, burned onto the video](docs/before-after.png)
 
 ### 3. Download and open PowerShell
 1. On the repo page on GitHub: click the Code button, then Download ZIP.
