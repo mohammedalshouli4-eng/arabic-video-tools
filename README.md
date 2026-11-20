@@ -13,7 +13,7 @@
 - كل أداة بتشتغل أول تجربة جافة: بتطبع شو رح تعمل وما بتكتب إشي. بس مع `-Run` بتشتغل فعلاً.
 - ما بتحذف ولا بتكتب فوق أي ملف، والفيديو الأصلي ما بيتغيّر.
 
-هاي النسخة الأولى (الطبقة 1): استخراج النص من الفيديو، وحرق الترجمة.
+هاي النسخة التانية (الطبقة 1 و 2): استخراج النص من الفيديو، وحرق الترجمة، وقص السكوت.
 
 ### 2. فيديو قبل وبعد
 ![قبل وبعد: نفس الفيديو بدون ترجمة، ومعه ترجمة إنجليزية بالنص وعربية تحت، محروقة على الفيديو](docs/before-after.png)
@@ -70,9 +70,10 @@ powershell.exe -ExecutionPolicy Bypass -File "<مجلد الريبو>\tools\vide
 ```
 
 ### 8. الأدوات واحدة واحدة
-بالقائمة (الطبقة 1):
+بالقائمة (الطبقة 1 و 2):
 - `1` الخط الكامل على inbox (`video-run`): بيشغّل الخمس مراحل ورا بعض، وبيوقف إذا مرحلة فشلت.
-- `8` حرق الترجمة (`video-subs`): بيحرق الـ srt على فيديو واحد، وبيكتب الفيديو الجديد بمجلد جديد `out\subs-...`.
+- `7` قص السكوت (`video-cut`): بيشيل السكتات من فيديو واحد بـ ffmpeg بس، بدون ذكاء اصطناعي، وبيخلي 0.15 ثانية على طرفي كل سكتة عشان الكلمات ما تنقص. بيكتب الفيديو المقصوص، و srt جديد بأوقات الفيديو المقصوص، و cut.csv، بمجلد جديد `out\cut-...`، والأصلي ما بيتغيّر.
+- `8` حرق الترجمة (`video-subs`): بيحرق الـ srt على فيديو واحد، وبيكتب الفيديو الجديد بمجلد جديد `out\subs-...`. وإذا خيار 7 موجود، بيسأل إذا بدك تحرق على آخر فيديو مقصوص.
 - `9` بينقل فيديو خلص من inbox لـ done.
 - `0` خروج.
 
@@ -124,7 +125,7 @@ Small PowerShell tools for Windows that turn the speech in a video into text and
 - Each tool starts as a dry run: it prints what it would do and writes nothing. Only with `-Run` does it really work.
 - Nothing is ever deleted or overwritten, and the original video never changes.
 
-This first version (layer 1): text from the video, and burned captions.
+This second version (layers 1 and 2): text from the video, burned captions, and silence removal.
 
 ### 2. Before and after
 ![Before and after: the same video without captions, then with English captions in the middle and Arabic captions at the bottom, burned onto the video](docs/before-after.png)
@@ -181,9 +182,10 @@ powershell.exe -ExecutionPolicy Bypass -File "<repo folder>\tools\video-menu.ps1
 ```
 
 ### 8. Tools
-In the menu (layer 1):
+In the menu (layers 1 and 2):
 - `1` Full pipeline on inbox (`video-run`): runs the five stages in order and stops if one fails.
-- `8` Burn captions (`video-subs`): burns the srt onto one video and writes the new video in a new `out\subs-...` folder.
+- `7` Remove silences (`video-cut`): removes the silent parts of one video with ffmpeg only, no AI, and keeps 0.15 seconds at each side of a silence so words are not cut. Writes the cut video, a new srt with the times of the cut video, and cut.csv in a new `out\cut-...` folder. The original never changes.
+- `8` Burn captions (`video-subs`): burns the srt onto one video and writes the new video in a new `out\subs-...` folder. When option 7 is there, it asks whether to burn onto the newest cut video.
 - `9` Moves a finished video from inbox to done.
 - `0` Exit.
 
