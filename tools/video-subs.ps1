@@ -6,7 +6,7 @@
 # translation for an English video. If that file is not there: STOP, with the exact path it looked for.
 # Only with -Lang ar: a missing .ar.srt falls back to the normal srt in the same place, with a yellow WARNING.
 # The text: Arial, centered, white with a dark outline. -Position bottom (default), middle or top sets the
-# libass Alignment (2, 5 or 8). -FontSize is in subtitle units, where the video height is 288 units, so 12
+# libass Alignment (2, 10 or 6, the old SSA numbers that force_style reads). -FontSize is in subtitle units, where the video height is 288 units, so 12
 # is about 4 percent of the height: readable on a vertical video.
 # -MarginV is the space from the bottom (or from the top with -Position top), in the same units. Default 30.
 # With -Position middle it has no effect.
@@ -54,7 +54,7 @@ if ($Lang) { $srtEnd = '.' + $Lang + '.srt' }
 if ($FontSize -lt 6 -or $FontSize -gt 40) { throw "-FontSize must be between 6 and 40: $FontSize" }
 if ($MarginV -lt 0 -or $MarginV -gt 200) { throw "-MarginV must be between 0 and 200: $MarginV" }
 if ($Position -cnotmatch '^(bottom|middle|top)\z') { throw "-Position must be bottom, middle or top: $Position" }
-$alignment = @{ bottom = 2; middle = 5; top = 8 }[$Position]
+$alignment = @{ bottom = 2; middle = 10; top = 6 }[$Position]
 if ($MaxWords -lt 0 -or $MaxWords -gt 20) { throw "-MaxWords must be between 0 and 20 (0 keeps whole sentences): $MaxWords" }
 if (-not (Test-Path -LiteralPath $ffmpeg -PathType Leaf)) { throw "ffmpeg not found: $ffmpeg" }
 if (-not (Test-Path -LiteralPath $outDir -PathType Container)) { throw "Folder not found: $outDir" }
