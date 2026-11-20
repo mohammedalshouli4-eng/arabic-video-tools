@@ -115,6 +115,7 @@ while ($true) {
     }
     if (-not $back) {
         $next = ConvertTo-PlainText ([string](Read-Host 'Press Enter for the menu, or type a number'))
+        if ($next -eq '0') { break }
         if ($next -match '^([0-9]|10)$') { if (Test-Option $next) { $pending = $next } else { Write-Hidden $next } }
     }
     Write-Host ''

@@ -2,11 +2,13 @@
 # Only functions: it runs nothing on its own. ASCII only, works on Windows PowerShell 5.1.
 
 # Asks a y/n question. Enter gives $default. Any other answer asks again.
+# On an Arabic keyboard the y key types U+063A and the n key U+0649, so those count as y and n.
 function Read-YesNo([string]$question, [bool]$default) {
     $hint = '(y/N)'
     if ($default) { $hint = '(Y/n)' }
     while ($true) {
         $a = ([string](Read-Host "$question $hint")).Trim().ToLower()
+        $a = $a.Replace([string][char]0x63A, 'y').Replace([string][char]0x649, 'n')
         if ($a -eq '') { return $default }
         if ($a -eq 'y' -or $a -eq 'yes') { return $true }
         if ($a -eq 'n' -or $a -eq 'no') { return $false }

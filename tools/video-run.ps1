@@ -64,7 +64,6 @@ if (-not $Run) {
     $why = Invoke-Stage $stages[0] $false
     if ($why) { Write-Host "STOP at Stage 1 list: $why" -ForegroundColor Red; exit 1 }
     Write-Host 'Stages 2 to 5 run only with -Run: each one reads the list the stage before it writes.'
-    Write-Host 'Dry run - nothing written.' -ForegroundColor Cyan
     exit 0
 }
 
