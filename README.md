@@ -41,7 +41,7 @@
 ### 5. التجهيز (المجلدات وملف الإعداد)
 من مجلد الريبو (المجلد اللي فيه `video-tools.root`)، اعمل المجلدات بأمر واحد:
 ```
-New-Item -ItemType Directory videos\inbox, videos\work, videos\out, videos\done, videos\moments, videos\models
+New-Item -ItemType Directory videos\inbox, videos\work, videos\out, videos\done, videos\models
 ```
 - `videos\inbox`: هون بتحط الفيديوهات الجديدة.
 - `videos\work`: الصوت والنص (wav و srt).
@@ -152,7 +152,7 @@ This first version (layer 1): text from the video, and burned captions.
 ### 5. Setup
 From the repo folder (the one with `video-tools.root`), make the folders with one command:
 ```
-New-Item -ItemType Directory videos\inbox, videos\work, videos\out, videos\done, videos\moments, videos\models
+New-Item -ItemType Directory videos\inbox, videos\work, videos\out, videos\done, videos\models
 ```
 - `videos\inbox`: put new videos here.
 - `videos\work`: audio and text (wav and srt).
