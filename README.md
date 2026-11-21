@@ -7,13 +7,13 @@
 ## العربي
 
 ### 1. شو هاي الأدوات
-أدوات صغيرة بـ PowerShell لويندوز، بتحوّل كلام الفيديو لنص، وبتحرق الترجمة على الفيديو. والترجمة العربية بتطلع صح: الحروف متصلة، والسطر من اليمين لليسار.
+أدوات صغيرة بـ PowerShell لويندوز: بتحوّل كلام الفيديو لنص، وبتحرق الترجمة على الفيديو، وبتقص السكوت، وبتجهّز صور ونصوص مرتبة عشان تشتغل عليها مع أي مساعد ذكاء اصطناعي. والترجمة العربية بتطلع صح: الحروف متصلة، والسطر من اليمين لليسار.
 - كل إشي بيشتغل على جهازك، بدون إنترنت وبدون اشتراك، ومجاني.
 - كل أداة بتعمل شغلة وحدة، وبتشتغلهم كلهم من قائمة مرقّمة وحدة.
 - كل أداة بتشتغل أول تجربة جافة: بتطبع شو رح تعمل وما بتكتب إشي. بس مع `-Run` بتشتغل فعلاً.
 - ما بتحذف ولا بتكتب فوق أي ملف، والفيديو الأصلي ما بيتغيّر.
 
-هاي النسخة التانية (الطبقة 1 و 2): استخراج النص من الفيديو، وحرق الترجمة، وقص السكوت.
+هاي النسخة الكاملة (v1.0): عشر أدوات بقائمة وحدة.
 
 ### 2. فيديو قبل وبعد
 ![قبل وبعد: نفس الفيديو بدون ترجمة، ومعه ترجمة إنجليزية بالنص وعربية تحت، محروقة على الفيديو](docs/before-after.png)
@@ -70,11 +70,17 @@ powershell.exe -ExecutionPolicy Bypass -File "<مجلد الريبو>\tools\vide
 ```
 
 ### 8. الأدوات واحدة واحدة
-بالقائمة (الطبقة 1 و 2):
+بالقائمة:
 - `1` الخط الكامل على inbox (`video-run`): بيشغّل الخمس مراحل ورا بعض، وبيوقف إذا مرحلة فشلت.
+- `2` صور من الفيديو (`video-frames`): صورة لكل مقطع كلام بالـ srt، مأخوذة بالنص بين بداية الجملة واللي بعدها، عشان الشاشة تطابق الكلام. وبيكتب `notes.md` فيه الجملة تحت كل صورة، ومكان فاضي لملاحظتك وسؤالك. كله بمجلد جديد `out\frames-...`.
+- `3` لحظات بتختارها (`video-moments`): أول مرة بيعمل ملف `videos\moments\<اسم الفيديو>.txt`. بتكتب فيه سطر لكل لحظة بهالشكل: `الوقت | طلبك`، مثلاً `01:10 | اشرحلي شو هاد`. وبعدين بياخد صورة عند كل وقت، وبيكتب `moments.md` فيه الصور والطلبات، بمجلد جديد `out\moments-...`. ما بينفّذ ولا طلب، بس بيجهّزه.
+- `4` zip للرفع (`video-upload`): zip واحد للفيديو فيه ملف التسليم، وآخر صور، وآخر لحظات، و `card-format.md`. بترفعه لمساعد ذكاء اصطناعي مرة وحدة، بدل ما تدوّر بالمجلدات. بينحط بمجلد `upload`.
+- `5` حفظ بطاقة (`video-card-save`): «البطاقة» ملف `.md` قصير عن فيديو واحد (الأفكار والحكم)، بيكتبه المساعد بشكل `card-format.md` وإنت بتنزّله. هاد الخيار بيفحص البطاقة بـ Downloads، وإذا سليمة بينقلها لمجلد `library`. البطاقة اللي فيها مشكلة ما بتنتقل، وبيطبع كل المشاكل مرة وحدة.
+- `6` جمع البطاقات (`video-card-pack`): كل البطاقات، أو بطاقات بالاسم، أو بموضوع، بملف واحد `out\library-....md`، عشان المساعد يربط الأفكار بين الفيديوهات.
 - `7` قص السكوت (`video-cut`): بيشيل السكتات من فيديو واحد بـ ffmpeg بس، بدون ذكاء اصطناعي، وبيخلي 0.15 ثانية على طرفي كل سكتة عشان الكلمات ما تنقص. بيكتب الفيديو المقصوص، و srt جديد بأوقات الفيديو المقصوص، و cut.csv، بمجلد جديد `out\cut-...`، والأصلي ما بيتغيّر.
 - `8` حرق الترجمة (`video-subs`): بيحرق الـ srt على فيديو واحد، وبيكتب الفيديو الجديد بمجلد جديد `out\subs-...`. وإذا خيار 7 موجود، بيسأل إذا بدك تحرق على آخر فيديو مقصوص.
 - `9` بينقل فيديو خلص من inbox لـ done.
+- `10` فيديو ملخص (`video-summary`): من بطاقة، بيعمل فيديو عمودي قصير 1080×1920: العنوان، ولحد 3 أفكار، والحكم، 3 ثواني لكل مشهد. اختياري، وبده Hyperframes (شوف القسم 10).
 - `0` خروج.
 
 الخمس مراحل (`video-run` بيشغّلهم، وكل وحدة بتشتغل لحالها كمان):
@@ -99,19 +105,45 @@ powershell -ExecutionPolicy Bypass -File tools\video-subs.ps1 -Name video-01.mp4
 
 وإذا الفيديو أصلاً بالعربي، `-Lang ar` لحاله بيكفي: الـ srt العادي عربي أصلاً.
 
-### 9. الخصوصية
+### 9. الشغل مع مساعد ذكاء اصطناعي (اختياري)
+الأدوات نفسها ما فيها ذكاء اصطناعي ولا بتحكي مع الإنترنت (whisper بيشتغل على جهازك). هي بس بتجهّز ملفات مرتبة بترفعها أو بتلصقها لأي مساعد بتختاره. طريقة وحدة للشغل:
+1. خيار `1`: النص من الفيديو.
+2. خيار `2` أو `3`: الصور، كل الفيديو أو لحظات بتختارها.
+3. خيار `4`: zip واحد، بترفعه للمساعد وبتطلب منه دليل للمبتدئ، أو شرح للحظات اللي اخترتها.
+4. اطلب من المساعد بطاقة للفيديو بشكل `card-format.md`، ونزّلها.
+5. خيار `5`: احفظ البطاقة بالمكتبة.
+6. خيار `6`: اجمع البطاقات، وارفع الملف، واطلب منه يربط الأفكار بين الفيديوهات.
+7. خيار `10` (اختياري): فيديو ملخص قصير من بطاقة.
+
+الملفات اللي بتطلع (`notes.md` و `moments.md` وملف المكتبة) فيها بأولها سطور قصيرة بالإنجليزي للمساعد، بتحكيله شو المطلوب.
+
+### 10. فيديو الملخص و Hyperframes (اختياري)
+خيار `10` بس بده [Hyperframes](https://www.npmjs.com/package/hyperframes)، والخيارات الباقية ما بتحتاجه.
+1. ركّب Node.js.
+2. اعمل مجلد لـ Hyperframes برا الريبو، مثلاً `C:\hyperframes`، وركّبه فيه (انجرّبت الأدوات مع النسخة 0.9.52):
+   ```
+   cd C:\hyperframes
+   npm install hyperframes@0.9.52 --ignore-scripts --no-fund --no-audit
+   ```
+3. Hyperframes بيرسم الفيديو بـ Chrome، ولازم Chrome يكون بمجلد `hf-cache` جوا نفس المجلد. الأداة ما بتنزّل ولا إشي، فإذا مش موجود بتوقف بـ STOP. شوف تعليمات Hyperframes لأول تشغيل، مع `HYPERFRAMES_CACHE_DIR` على `C:\hyperframes\hf-cache`.
+4. بملف الإعداد المحلي، حط `HyperframesDir = 'C:\hyperframes'`.
+
+الأداة بتشغّل Hyperframes بس لوقت الرسم، ومعه إعدادات بتطفي الإحصائيات (telemetry) وفحص التحديثات. وما بتغيّر إشي بالجهاز، وما بتشغّل npm ولا npx.
+
+### 11. الخصوصية
 - كل الشغل على جهازك. ما في إنترنت، ولا حساب، ولا إرسال لأي مكان.
-- الإنترنت بيلزم بس لتركيب ffmpeg وتنزيل الموديل مرة وحدة.
+- الإنترنت بيلزم بس لتركيب ffmpeg وتنزيل الموديل مرة وحدة (و Hyperframes إذا بدك خيار 10).
+- إذا رفعت ملفات لمساعد ذكاء اصطناعي، هاد قرارك وبحسابك. الأدوات ما بترفع إشي لحالها.
 - الفيديوهات والنصوص بتضل بمجلد `videos`، وهو مش داخل git.
 
-### 10. مشاكل معروفة
+### 12. مشاكل معروفة
 - العربي بنافذة PowerShell بيبيّن مقلوب. هاد عرض بس، وبالفيديو وبالملفات صح.
 - whisper أحياناً بيكتب الكلمات الإنجليزية التقنية غلط بالكلام العربي، فراجع النص قبل ما تحرقه.
 - whisper ممكن يخترع نص بالسكوت أو بآخر الفيديو. ملف التسليم بيعلّم هالجمل بـ `[?]`، وما بيشيل إشي.
 - فلتر whisper ما بيقبل حرف القرص (C:) بالمسار، فالموديل لازم يكون جوا مجلد `videos`.
 - إذا ffmpeg جاي من الـ PATH، بيطلع تحذير أصفر. هاد طبيعي، بس تأكد إنه فيه whisper و libass، أو حط `FfmpegBin` بملف الإعداد.
 
-### 11. الرخصة
+### 13. الرخصة
 MIT. شوف ملف [LICENSE](LICENSE).
 
 ---
@@ -119,13 +151,13 @@ MIT. شوف ملف [LICENSE](LICENSE).
 ## English
 
 ### 1. What it does
-Small PowerShell tools for Windows that turn the speech in a video into text and burn captions onto the video. Arabic captions come out right: joined letters, and each line right to left.
+Small PowerShell tools for Windows: they turn the speech in a video into text, burn captions onto the video, remove silences, and prepare tidy frames and text to work on with any AI assistant. Arabic captions come out right: joined letters, and each line right to left.
 - Everything runs on your machine: no internet, no account, free.
 - Each tool does one job, and one numbered menu runs them all.
 - Each tool starts as a dry run: it prints what it would do and writes nothing. Only with `-Run` does it really work.
 - Nothing is ever deleted or overwritten, and the original video never changes.
 
-This second version (layers 1 and 2): text from the video, burned captions, and silence removal.
+This is the full version (v1.0): ten tools in one menu.
 
 ### 2. Before and after
 ![Before and after: the same video without captions, then with English captions in the middle and Arabic captions at the bottom, burned onto the video](docs/before-after.png)
@@ -182,11 +214,17 @@ powershell.exe -ExecutionPolicy Bypass -File "<repo folder>\tools\video-menu.ps1
 ```
 
 ### 8. Tools
-In the menu (layers 1 and 2):
+In the menu:
 - `1` Full pipeline on inbox (`video-run`): runs the five stages in order and stops if one fails.
+- `2` Frames for a video (`video-frames`): one frame for each block of speech in the srt, taken halfway between a sentence and the next one, so the screen matches the words. It also writes `notes.md` with the sentence under each frame and room for your note and question. All in a new `out\frames-...` folder.
+- `3` Moments you pick (`video-moments`): the first time it makes `videos\moments\<video name>.txt`. You write one line per moment in it: `time | your request`, for example `01:10 | explain what this is`. Then it takes a frame at each time and writes `moments.md` with the frames and the requests, in a new `out\moments-...` folder. It never runs a request, it only prepares it.
+- `4` Zip for upload (`video-upload`): one zip for one video with the handoff file, the newest frames, the newest moments and `card-format.md`. You upload it to an AI assistant once, instead of searching the folders. It goes in the `upload` folder.
+- `5` Save a card (`video-card-save`): a "card" is a short `.md` file about one video (its ideas and a verdict), written by the assistant in the `card-format.md` shape and downloaded by you. This option checks the card in Downloads and, if it is fine, moves it to the `library` folder. A card with a problem is not moved, and every problem is printed at once.
+- `6` Pack cards (`video-card-pack`): all cards, chosen cards or cards on one topic, in one file `out\library-....md`, so the assistant can link the ideas between videos.
 - `7` Remove silences (`video-cut`): removes the silent parts of one video with ffmpeg only, no AI, and keeps 0.15 seconds at each side of a silence so words are not cut. Writes the cut video, a new srt with the times of the cut video, and cut.csv in a new `out\cut-...` folder. The original never changes.
 - `8` Burn captions (`video-subs`): burns the srt onto one video and writes the new video in a new `out\subs-...` folder. When option 7 is there, it asks whether to burn onto the newest cut video.
 - `9` Moves a finished video from inbox to done.
+- `10` Summary video (`video-summary`): from a card, a short vertical 1080×1920 video: the title, up to 3 ideas and the verdict, 3 seconds each. Optional, and it needs Hyperframes (see section 10).
 - `0` Exit.
 
 The five stages (`video-run` runs them, and each one also runs alone):
@@ -211,17 +249,43 @@ Arabic captions for a video in another language:
 
 If the video is already in Arabic, `-Lang ar` alone is enough: the normal srt is already Arabic.
 
-### 9. Privacy
+### 9. Working with an AI assistant (optional)
+The tools themselves have no AI and never talk to the internet (whisper runs on your machine). They only prepare tidy files that you upload or paste into any assistant you choose. One way to work:
+1. Option `1`: the text from the video.
+2. Option `2` or `3`: frames, for the whole video or for moments you pick.
+3. Option `4`: one zip, which you upload to the assistant with a request for a beginner guide, or an explanation of the moments you picked.
+4. Ask the assistant for a card for the video in the `card-format.md` shape, and download it.
+5. Option `5`: save the card in the library.
+6. Option `6`: pack the cards, upload the file and ask it to link the ideas between videos.
+7. Option `10` (optional): a short summary video from a card.
+
+The files they write (`notes.md`, `moments.md` and the library file) start with a few short lines in English for the assistant that say what is wanted.
+
+### 10. Summary video and Hyperframes (optional)
+Only option `10` needs [Hyperframes](https://www.npmjs.com/package/hyperframes); the other options do not.
+1. Install Node.js.
+2. Make a folder for Hyperframes outside the repo, for example `C:\hyperframes`, and install it there (the tools were tested with version 0.9.52):
+   ```
+   cd C:\hyperframes
+   npm install hyperframes@0.9.52 --ignore-scripts --no-fund --no-audit
+   ```
+3. Hyperframes renders with Chrome, and Chrome must be in the `hf-cache` folder inside that same folder. The tool downloads nothing, so without it you get a STOP. See the Hyperframes instructions for the first run, with `HYPERFRAMES_CACHE_DIR` set to `C:\hyperframes\hf-cache`.
+4. In the local settings file, set `HyperframesDir = 'C:\hyperframes'`.
+
+The tool runs Hyperframes only for the render, with settings that turn off telemetry and the update check. It changes nothing on the machine and never runs npm or npx.
+
+### 11. Privacy
 - All the work happens on your machine. No internet, no account, nothing is sent anywhere.
-- The internet is needed only once, to install ffmpeg and download the model.
+- The internet is needed only once, to install ffmpeg and download the model (and Hyperframes if you want option 10).
+- If you upload files to an AI assistant, that is your choice and your account. The tools upload nothing by themselves.
 - Videos and text stay in the `videos` folder, which is not in git.
 
-### 10. Known issues
+### 12. Known issues
 - Arabic in the PowerShell window shows reversed. That is the display only: the video and the files are right.
 - whisper sometimes misspells English technical words in Arabic speech, so check the text before you burn it.
 - whisper can invent text in silence or at the end of a video. The handoff file marks those lines with `[?]` and removes nothing.
 - The whisper filter does not accept a drive letter (C:) in a path, so the model must be inside the `videos` folder.
 - When ffmpeg comes from PATH you get a yellow warning. That is normal, but check it has whisper and libass, or set `FfmpegBin` in the settings file.
 
-### 11. License
+### 13. License
 MIT. See [LICENSE](LICENSE).

@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <!-- Summary video template for video-summary.ps1 (Hyperframes). Same look as the summary-07 trial. -->
+    <!-- The places in double braces are filled by summary-lib.ps1. Each SCENE block below is a pattern: it is cut out and
+         repeated once per scene (title, each idea, verdict). GSAP comes from a local copy (vendor/), no network. -->
+    <script src="vendor/gsap.min.js"></script>
+    <style>
+      :root {
+        --ground: #0f1420;
+        --ground-2: #1b2438;
+        --ink: #ffffff;
+        --muted: #a9b4c8;
+        --accent: #ffb547;
+        --font-ar: "Segoe UI", Arial, sans-serif;
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1080px; height: 1920px; overflow: hidden; background: var(--ground); }
+      #root {
+        position: relative; width: 1080px; height: 1920px; overflow: hidden;
+        font-family: var(--font-ar); color: var(--ink);
+        background: linear-gradient(180deg, var(--ground) 0%, var(--ground-2) 100%);
+      }
+      .clip {
+        position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center;
+        justify-content: center; gap: 56px; padding: 0 90px; text-align: center; direction: rtl;
+      }
+      .tag { font-size: 44px; font-weight: 600; color: var(--accent); letter-spacing: 0.02em; }
+      /* Long text never leaves the screen: at most 3 lines, the rest is hidden. */
+      .big, .line, .sub { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden; }
+      .big { font-size: 96px; font-weight: 700; line-height: 1.3; }
+      .line { font-size: 88px; font-weight: 700; line-height: 1.35; }
+      .sub { font-size: 56px; font-weight: 500; line-height: 1.5; color: var(--muted); }
+      .num { font-size: 150px; font-weight: 800; color: var(--accent); line-height: 1; }
+      .verdict { font-size: 120px; font-weight: 800; color: var(--accent); }
+      bdi { direction: ltr; unicode-bidi: isolate; }
+      #bar {
+        position: absolute; right: 0; bottom: 0; width: 1080px; height: 14px; background: var(--accent);
+        transform-origin: right center; transform: scaleX(0);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="{{DURATION}}" data-width="1080" data-height="1920">
+{{SCENES}}
+      <div id="bar"></div>
+    </div>
+<!--SCENE:title
+      <section class="clip" data-start="{{START}}" data-duration="3" data-track-index="0">
+        <div class="tag rise">ملخص {{VIDEO}}</div>
+        <div class="big rise">{{TEXT}}</div>
+      </section>
+SCENE-->
+<!--SCENE:idea
+      <section class="clip" data-start="{{START}}" data-duration="3" data-track-index="0">
+        <div class="num rise">{{NUM}}</div>
+        <div class="line rise">{{TEXT}}</div>
+      </section>
+SCENE-->
+<!--SCENE:verdict
+      <section class="clip" data-start="{{START}}" data-duration="3" data-track-index="0">
+        <div class="tag rise">الحكم</div>
+        <div class="verdict rise">{{WORD}}</div>
+        <div class="sub rise">{{TEXT}}</div>
+      </section>
+SCENE-->
+    <script>
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+      // Each scene: its lines rise in one after the other, then leave before the next scene (the last one stays).
+      const scenes = Array.from(document.querySelectorAll("#root > section.clip"));
+      scenes.forEach((el, i) => {
+        const at = parseFloat(el.dataset.start);
+        const rise = el.querySelectorAll(".rise");
+        tl.fromTo(rise, { opacity: 0, y: 70 }, { opacity: 1, y: 0, duration: 0.6, ease: "power3.out", stagger: 0.18 }, at + 0.1);
+        if (i < scenes.length - 1) {
+          tl.to(rise, { opacity: 0, y: -50, duration: 0.35, ease: "power2.in" }, at + 2.55);
+        }
+      });
+      // Progress bar from right to left over the whole video.
+      tl.fromTo("#bar", { scaleX: 0 }, { scaleX: 1, duration: {{DURATION}}, ease: "none" }, 0);
+      window.__timelines["main"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>
