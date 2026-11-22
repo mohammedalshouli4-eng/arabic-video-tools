@@ -10,6 +10,7 @@ param(
     [switch]$Run
 )
 $ErrorActionPreference = 'Stop'
+function Stop-Tool([string]$msg) { Write-Host "STOP: $msg" -ForegroundColor Red; exit 1 }
 
 $cfgLib = Join-Path $PSScriptRoot 'config-lib.ps1'
 if (-not (Test-Path -LiteralPath $cfgLib -PathType Leaf)) { Write-Host "STOP: helper file missing next to the script: $cfgLib" -ForegroundColor Red; exit 1 }
@@ -22,11 +23,11 @@ $maxSec = 900
 $culture = [System.Globalization.CultureInfo]::InvariantCulture
 
 if (-not (Test-Path -LiteralPath $ffprobe -PathType Leaf)) { throw "ffprobe not found: $ffprobe" }
-if (-not (Test-Path -LiteralPath $inbox -PathType Container)) { throw "Inbox folder not found: $inbox" }
-if (-not (Test-Path -LiteralPath $outDir -PathType Container)) { throw "Out folder not found: $outDir" }
+if (-not (Test-Path -LiteralPath $inbox -PathType Container)) { Stop-Tool "Inbox folder not found: $inbox. Make the folders first (README, section 5)." }
+if (-not (Test-Path -LiteralPath $outDir -PathType Container)) { Stop-Tool "Out folder not found: $outDir. Make the folders first (README, section 5)." }
 
 $listFile = Get-ChildItem -LiteralPath $outDir -File -Filter 'videos*.csv' | Sort-Object LastWriteTime -Descending | Select-Object -First 1
-if (-not $listFile) { throw "No videos*.csv in $outDir. Run video-list.ps1 -Run first." }
+if (-not $listFile) { Stop-Tool "No video list in $outDir yet. Run option 1 in the menu (or video-list.ps1 -Run) first." }
 Write-Host "List: $($listFile.Name)"
 
 # Runs ffprobe on one file and returns @{ ok; duration; audio }. Never throws.

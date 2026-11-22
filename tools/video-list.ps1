@@ -9,6 +9,7 @@ param(
     [switch]$Run
 )
 $ErrorActionPreference = 'Stop'
+function Stop-Tool([string]$msg) { Write-Host "STOP: $msg" -ForegroundColor Red; exit 1 }
 
 $cfgLib = Join-Path $PSScriptRoot 'config-lib.ps1'
 if (-not (Test-Path -LiteralPath $cfgLib -PathType Leaf)) { Write-Host "STOP: helper file missing next to the script: $cfgLib" -ForegroundColor Red; exit 1 }
@@ -17,8 +18,8 @@ try { $cfg = Get-VideoConfig } catch { Write-Host $_.Exception.Message -Foregrou
 $inbox = $cfg.Inbox
 $outDir = $cfg.Out
 
-if (-not (Test-Path -LiteralPath $inbox -PathType Container)) { throw "Inbox folder not found: $inbox" }
-if (-not (Test-Path -LiteralPath $outDir -PathType Container)) { throw "Out folder not found: $outDir" }
+if (-not (Test-Path -LiteralPath $inbox -PathType Container)) { Stop-Tool "Inbox folder not found: $inbox. Make the folders first (README, section 5)." }
+if (-not (Test-Path -LiteralPath $outDir -PathType Container)) { Stop-Tool "Out folder not found: $outDir. Make the folders first (README, section 5)." }
 
 $videoExt = @('.mp4', '.mov', '.mkv', '.webm', '.m4v', '.avi')
 $inProgressExt = @('.crdownload', '.part', '.partial', '.download', '.tmp')

@@ -11,6 +11,7 @@ param(
     [switch]$Run
 )
 $ErrorActionPreference = 'Stop'
+function Stop-Tool([string]$msg) { Write-Host "STOP: $msg" -ForegroundColor Red; exit 1 }
 
 $cfgLib = Join-Path $PSScriptRoot 'config-lib.ps1'
 if (-not (Test-Path -LiteralPath $cfgLib -PathType Leaf)) { Write-Host "STOP: helper file missing next to the script: $cfgLib" -ForegroundColor Red; exit 1 }
@@ -22,12 +23,12 @@ $culture = [System.Globalization.CultureInfo]::InvariantCulture
 $timeRx = '(\d+):(\d\d):(\d\d)[,.](\d+)\s*-->\s*(\d+):(\d\d):(\d\d)[,.](\d+)'
 
 foreach ($d in @($workDir, $outDir)) {
-    if (-not (Test-Path -LiteralPath $d -PathType Container)) { throw "Folder not found: $d" }
+    if (-not (Test-Path -LiteralPath $d -PathType Container)) { Stop-Tool "Folder not found: $d. Make the folders first (README, section 5)." }
 }
 $textList = Get-ChildItem -LiteralPath $outDir -File -Filter 'text*.csv' | Sort-Object LastWriteTime -Descending | Select-Object -First 1
-if (-not $textList) { throw "No text*.csv in $outDir. Run video-text.ps1 -Run first." }
+if (-not $textList) { Stop-Tool "No text list in $outDir yet. Run option 1 in the menu (or video-text.ps1 -Run) first." }
 $lengthList = Get-ChildItem -LiteralPath $outDir -File -Filter 'lengths*.csv' | Sort-Object LastWriteTime -Descending | Select-Object -First 1
-if (-not $lengthList) { throw "No lengths*.csv in $outDir. Run video-length.ps1 -Run first." }
+if (-not $lengthList) { Stop-Tool "No lengths list in $outDir yet. Run option 1 in the menu (or video-length.ps1 -Run) first." }
 Write-Host "Text list: $($textList.Name)"
 Write-Host "Lengths list: $($lengthList.Name)"
 

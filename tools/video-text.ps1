@@ -13,6 +13,7 @@ param(
     [switch]$Run
 )
 $ErrorActionPreference = 'Stop'
+function Stop-Tool([string]$msg) { Write-Host "STOP: $msg" -ForegroundColor Red; exit 1 }
 
 $cfgLib = Join-Path $PSScriptRoot 'config-lib.ps1'
 if (-not (Test-Path -LiteralPath $cfgLib -PathType Leaf)) { Write-Host "STOP: helper file missing next to the script: $cfgLib" -ForegroundColor Red; exit 1 }
@@ -27,13 +28,13 @@ $modelRel = $cfg.WhisperModelRel
 $timeoutMs = 1200000
 
 if (-not (Test-Path -LiteralPath $ffmpeg -PathType Leaf)) { throw "ffmpeg not found: $ffmpeg" }
-if (-not (Test-Path -LiteralPath $model -PathType Leaf)) { throw "Whisper model not found: $model" }
+if (-not (Test-Path -LiteralPath $model -PathType Leaf)) { Stop-Tool "Whisper model not found: $model. Download ggml-large-v3-turbo-q5_0.bin into videos\models (README, section 4)." }
 foreach ($d in @($baseDir, $workDir, $outDir)) {
-    if (-not (Test-Path -LiteralPath $d -PathType Container)) { throw "Folder not found: $d" }
+    if (-not (Test-Path -LiteralPath $d -PathType Container)) { Stop-Tool "Folder not found: $d. Make the folders first (README, section 5)." }
 }
 
 $listFile = Get-ChildItem -LiteralPath $outDir -File -Filter 'audio*.csv' | Sort-Object LastWriteTime -Descending | Select-Object -First 1
-if (-not $listFile) { throw "No audio*.csv in $outDir. Run video-audio.ps1 -Run first." }
+if (-not $listFile) { Stop-Tool "No audio list in $outDir yet. Run option 1 in the menu (or video-audio.ps1 -Run) first." }
 Write-Host "List: $($listFile.Name)"
 
 # Runs ffmpeg with the whisper filter for one wav. Paths are relative to <Videos>.

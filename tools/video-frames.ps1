@@ -17,6 +17,7 @@ param(
     [switch]$Run
 )
 $ErrorActionPreference = 'Stop'
+function Stop-Tool([string]$msg) { Write-Host "STOP: $msg" -ForegroundColor Red; exit 1 }
 
 $libPath = Join-Path $PSScriptRoot 'frames-lib.ps1'
 if (-not (Test-Path -LiteralPath $libPath -PathType Leaf)) { Write-Host "STOP: helper file missing next to the script: $libPath" -ForegroundColor Red; exit 1 }
@@ -38,17 +39,17 @@ $timeoutMs = 60000
 
 if (-not (Test-Path -LiteralPath $ffmpeg -PathType Leaf)) { throw "ffmpeg not found: $ffmpeg" }
 foreach ($d in @($workDir, $outDir)) {
-    if (-not (Test-Path -LiteralPath $d -PathType Container)) { throw "Folder not found: $d" }
+    if (-not (Test-Path -LiteralPath $d -PathType Container)) { Stop-Tool "Folder not found: $d. Make the folders first (README, section 5)." }
 }
 
 if ($Name) {
-    if (-not (Test-NameAllowed $Name)) { throw "Name not allowed (a video name only, no path or filter characters): $Name" }
+    if (-not (Test-NameAllowed $Name)) { Stop-Tool "Use a video file name only, like video-07.mp4 (no path): $Name" }
     $names = @($Name)
     Write-Host "Video: $Name"
 }
 else {
     $textList = Get-ChildItem -LiteralPath $outDir -File -Filter 'text*.csv' | Sort-Object LastWriteTime -Descending | Select-Object -First 1
-    if (-not $textList) { throw "No text*.csv in $outDir. Run video-text.ps1 -Run first, or use -Name." }
+    if (-not $textList) { Stop-Tool "No text list in $outDir yet. Run option 1 in the menu (or video-text.ps1 -Run) first, or give a video name with -Name." }
     Write-Host "Text list: $($textList.Name)"
     $names = @(Import-Csv -LiteralPath $textList.FullName -Encoding UTF8 | Where-Object { $_.status -eq 'ok' -or $_.status -eq 'exists' } | ForEach-Object { ([string]$_.file).Trim() })
 }

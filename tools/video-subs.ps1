@@ -47,17 +47,17 @@ $doneDir = $cfg.Done
 $outDir = $cfg.Out
 try { $ffmpeg = Get-FfmpegTool 'ffmpeg' $cfg } catch { Write-Host $_.Exception.Message -ForegroundColor Red; exit 1 }
 
-if (-not (Test-NameAllowed $Name)) { throw "Use -Name with a video file name only, like video-06.mp4: $Name" }
-if ($Lang -and $Lang -cnotmatch '^[a-z]{2}\z') { throw "-Lang must be two small letters a-z, like ar: $Lang" }
+if (-not (Test-NameAllowed $Name)) { Stop-Tool "Use -Name with a video file name only, like video-07.mp4 (no path): $Name" }
+if ($Lang -and $Lang -cnotmatch '^[a-z]{2}\z') { Stop-Tool "-Lang must be two small letters a-z, like ar: $Lang" }
 $srtEnd = '.srt'
 if ($Lang) { $srtEnd = '.' + $Lang + '.srt' }
-if ($FontSize -lt 6 -or $FontSize -gt 40) { throw "-FontSize must be between 6 and 40: $FontSize" }
-if ($MarginV -lt 0 -or $MarginV -gt 200) { throw "-MarginV must be between 0 and 200: $MarginV" }
-if ($Position -cnotmatch '^(bottom|middle|top)\z') { throw "-Position must be bottom, middle or top: $Position" }
+if ($FontSize -lt 6 -or $FontSize -gt 40) { Stop-Tool "-FontSize must be between 6 and 40: $FontSize" }
+if ($MarginV -lt 0 -or $MarginV -gt 200) { Stop-Tool "-MarginV must be between 0 and 200: $MarginV" }
+if ($Position -cnotmatch '^(bottom|middle|top)\z') { Stop-Tool "-Position must be bottom, middle or top: $Position" }
 $alignment = @{ bottom = 2; middle = 10; top = 6 }[$Position]
-if ($MaxWords -lt 0 -or $MaxWords -gt 20) { throw "-MaxWords must be between 0 and 20 (0 keeps whole sentences): $MaxWords" }
+if ($MaxWords -lt 0 -or $MaxWords -gt 20) { Stop-Tool "-MaxWords must be between 0 and 20 (0 keeps whole sentences): $MaxWords" }
 if (-not (Test-Path -LiteralPath $ffmpeg -PathType Leaf)) { throw "ffmpeg not found: $ffmpeg" }
-if (-not (Test-Path -LiteralPath $outDir -PathType Container)) { throw "Folder not found: $outDir" }
+if (-not (Test-Path -LiteralPath $outDir -PathType Container)) { Stop-Tool "Folder not found: $outDir. Make the folders first (README, section 5)." }
 
 # The srt path is kept relative to <Videos>, with forward slashes, for the subtitles filter.
 if ($Cut) {

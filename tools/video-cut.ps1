@@ -39,11 +39,11 @@ $workDir = $cfg.Work
 $outDir = $cfg.Out
 try { $ffmpeg = Get-FfmpegTool 'ffmpeg' $cfg } catch { Write-Host $_.Exception.Message -ForegroundColor Red; exit 1 }
 
-if (-not (Test-NameAllowed $Name)) { throw "Use -Name with a video file name only, like video-07.mp4: $Name" }
-if ($NoiseDb -lt -90 -or $NoiseDb -gt -10) { throw "-NoiseDb must be between -90 and -10: $NoiseDb" }
-if ($MinSilence -le 2 * $pad -or $MinSilence -gt 30) { throw "-MinSilence must be more than $(2 * $pad) and at most 30: $MinSilence" }
+if (-not (Test-NameAllowed $Name)) { Stop-Tool "Use -Name with a video file name only, like video-07.mp4 (no path): $Name" }
+if ($NoiseDb -lt -90 -or $NoiseDb -gt -10) { Stop-Tool "-NoiseDb must be between -90 and -10: $NoiseDb" }
+if ($MinSilence -le 2 * $pad -or $MinSilence -gt 30) { Stop-Tool "-MinSilence must be more than $(2 * $pad) and at most 30: $MinSilence" }
 if (-not (Test-Path -LiteralPath $ffmpeg -PathType Leaf)) { throw "ffmpeg not found: $ffmpeg" }
-foreach ($d in @($workDir, $outDir)) { if (-not (Test-Path -LiteralPath $d -PathType Container)) { throw "Folder not found: $d" } }
+foreach ($d in @($workDir, $outDir)) { if (-not (Test-Path -LiteralPath $d -PathType Container)) { Stop-Tool "Folder not found: $d. Make the folders first (README, section 5)." } }
 
 $src = Find-Video $Name $inbox $doneDir
 if (-not $src) { Stop-Tool "video not in inbox or done: $Name" }

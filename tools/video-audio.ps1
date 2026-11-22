@@ -12,6 +12,7 @@ param(
     [switch]$Run
 )
 $ErrorActionPreference = 'Stop'
+function Stop-Tool([string]$msg) { Write-Host "STOP: $msg" -ForegroundColor Red; exit 1 }
 
 $cfgLib = Join-Path $PSScriptRoot 'config-lib.ps1'
 if (-not (Test-Path -LiteralPath $cfgLib -PathType Leaf)) { Write-Host "STOP: helper file missing next to the script: $cfgLib" -ForegroundColor Red; exit 1 }
@@ -25,11 +26,11 @@ $timeoutMs = 600000
 
 if (-not (Test-Path -LiteralPath $ffmpeg -PathType Leaf)) { throw "ffmpeg not found: $ffmpeg" }
 foreach ($d in @($inbox, $workDir, $outDir)) {
-    if (-not (Test-Path -LiteralPath $d -PathType Container)) { throw "Folder not found: $d" }
+    if (-not (Test-Path -LiteralPath $d -PathType Container)) { Stop-Tool "Folder not found: $d. Make the folders first (README, section 5)." }
 }
 
 $listFile = Get-ChildItem -LiteralPath $outDir -File -Filter 'lengths*.csv' | Sort-Object LastWriteTime -Descending | Select-Object -First 1
-if (-not $listFile) { throw "No lengths*.csv in $outDir. Run video-length.ps1 -Run first." }
+if (-not $listFile) { Stop-Tool "No lengths list in $outDir yet. Run option 1 in the menu (or video-length.ps1 -Run) first." }
 Write-Host "List: $($listFile.Name)"
 
 # Runs ffmpeg for one file. Returns $true only if ffmpeg exited with 0 in time. Never throws.

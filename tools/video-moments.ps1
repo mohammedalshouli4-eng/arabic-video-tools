@@ -12,6 +12,7 @@ param(
     [switch]$Run
 )
 $ErrorActionPreference = 'Stop'
+function Stop-Tool([string]$msg) { Write-Host "STOP: $msg" -ForegroundColor Red; exit 1 }
 
 $libPath = Join-Path $PSScriptRoot 'moments-lib.ps1'
 $notePath = Join-Path $PSScriptRoot 'moments-note.md'
@@ -37,13 +38,13 @@ $maxMoments = 40
 $timeoutMs = 60000
 
 foreach ($f in @($ffmpeg, $ffprobe)) { if (-not (Test-Path -LiteralPath $f -PathType Leaf)) { throw "ffmpeg or ffprobe not found: $f" } }
-foreach ($d in @($workDir, $outDir)) { if (-not (Test-Path -LiteralPath $d -PathType Container)) { throw "Folder not found: $d" } }
+foreach ($d in @($workDir, $outDir)) { if (-not (Test-Path -LiteralPath $d -PathType Container)) { Stop-Tool "Folder not found: $d. Make the folders first (README, section 5)." } }
 if ([string]::IsNullOrWhiteSpace($Name) -or $Name -match '[\\/:]' -or $Name -match '\.\.' -or $Name -match "[',;=\[\]%]") {
-    throw "Use -Name with a video name only (no path or filter characters): $Name"
+    Stop-Tool "Use -Name with a video name only, like video-07 or video-07.mp4 (no path): $Name"
 }
 
 $found = Find-Video $Name @($inbox, $doneDir) $exts
-if ($found.Count -eq 0) { throw "Video not found in inbox or done: $Name" }
+if ($found.Count -eq 0) { Stop-Tool "Video not found in inbox or done: $Name. Check the name, like video-07." }
 if ($found.Count -gt 1) {
     Write-Host "STOP: more than one video matches ${Name}: $(($found | ForEach-Object { $_.Name }) -join ', '). Use the full name." -ForegroundColor Red
     exit 1
@@ -69,7 +70,7 @@ if ($needFolder -or -not (Test-Path -LiteralPath $momentsFile -PathType Leaf)) {
 $durText = Invoke-Tool $ffprobe ('-v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "' + $video.FullName + '"') $timeoutMs
 $duration = 0.0
 if ($null -eq $durText -or -not [double]::TryParse($durText.Trim(), [System.Globalization.NumberStyles]::Float, $culture, [ref]$duration)) {
-    throw "ffprobe could not read the duration of $($video.Name)"
+    Stop-Tool "Could not read the length of $($video.Name). Is it a real, finished video file?"
 }
 $durClock = (Get-Label ([int][math]::Floor($duration))).Replace('-', ':')
 

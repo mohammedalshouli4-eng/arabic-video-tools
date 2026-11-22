@@ -36,7 +36,7 @@ foreach ($d in @($library, $outDir)) {
 
 # With powershell -File, -Names video-05,video-08 comes as one string, so it is split on commas here.
 $chosen = @($Names | ForEach-Object { $_ -split ',' } | ForEach-Object { $_.Trim() } | Where-Object { $_ -ne '' } | ForEach-Object { $_ -replace '\.md$', '' })
-foreach ($n in $chosen) { if (-not (Test-CardName $n)) { throw "Use -Names with card names only (no path): $n" } }
+foreach ($n in $chosen) { if (-not (Test-CardName $n)) { Stop-Tool "Use -Names with card names only, like video-05,video-08 (no path): $n" } }
 $Topic = ([string]$Topic).Trim()
 
 $cards = New-Object System.Collections.Generic.List[object]

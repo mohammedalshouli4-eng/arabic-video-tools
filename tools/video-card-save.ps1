@@ -12,6 +12,7 @@ param(
     [switch]$Run
 )
 $ErrorActionPreference = 'Stop'
+function Stop-Tool([string]$msg) { Write-Host "STOP: $msg" -ForegroundColor Red; exit 1 }
 
 $libPath = Join-Path $PSScriptRoot 'card-lib.ps1'
 if (-not (Test-Path -LiteralPath $libPath -PathType Leaf)) { Write-Host "STOP: helper file missing next to the script: $libPath" -ForegroundColor Red; exit 1 }
@@ -27,7 +28,7 @@ $inbox = $cfg.Inbox
 $doneDir = $cfg.Done
 
 if ($Name -match '\.md$') { $Name = $Name.Substring(0, $Name.Length - 3) }
-if (-not (Test-CardName $Name)) { throw "Use -Name with a card name only (no path): $Name" }
+if (-not (Test-CardName $Name)) { Stop-Tool "Use -Name with a card name only, like video-08 (no path): $Name" }
 $src = Join-Path $downloads ($Name + '.md')
 $dest = Join-Path $library ($Name + '.md')
 

@@ -35,7 +35,7 @@ $timeoutMs = 1800000
 
 # The card.
 if ($Name -match '\.(md|mp4)$') { $Name = $Name -replace '\.(md|mp4)$', '' }
-if (-not (Test-CardName $Name)) { throw "Use -Name with a card name only, like video-07: $Name" }
+if (-not (Test-CardName $Name)) { Stop-Tool "Use -Name with a card name only, like video-07 (no path): $Name" }
 $cardPath = Join-Path $cfg.Library ($Name + '.md')
 if (-not (Test-Path -LiteralPath $cardPath -PathType Leaf)) { Stop-Tool "card not found: $cardPath" }
 $card = Read-Card $cardPath
@@ -62,8 +62,8 @@ $all = Get-CardIdeas $card
 $picks = @(1..([math]::Min(3, $all.Count)))
 if ($Ideas.Trim()) {
     $picks = @($Ideas -split ',' | ForEach-Object { $_.Trim() } | Where-Object { $_ -ne '' })
-    foreach ($n in $picks) { if ($n -notmatch '^[0-9]+$' -or [int]$n -lt 1 -or [int]$n -gt $all.Count) { throw "-Ideas takes numbers from 1 to $($all.Count), like 1,4,6: $Ideas" } }
-    if ($picks.Count -gt 3) { throw "-Ideas takes at most 3 numbers: $Ideas" }
+    foreach ($n in $picks) { if ($n -notmatch '^[0-9]+$' -or [int]$n -lt 1 -or [int]$n -gt $all.Count) { Stop-Tool "This card has $($all.Count) ideas. Choose numbers from 1 to $($all.Count): $Ideas" } }
+    if ($picks.Count -gt 3) { Stop-Tool "Choose at most 3 ideas, like 1,2: $Ideas" }
 }
 $ideaTexts = New-Object System.Collections.Generic.List[string]
 foreach ($n in $picks) {

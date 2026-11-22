@@ -32,7 +32,7 @@ function Get-Stamped([string]$rx) {
 }
 
 if ($Name -cnotmatch '^[A-Za-z0-9][A-Za-z0-9_-]*\z') { Stop-Tool "Use -Name with a video name only, like video-05 or demo-01 (no path, no extension): $Name" }
-if (-not (Test-Path -LiteralPath $outDir -PathType Container)) { throw "Folder not found: $outDir" }
+if (-not (Test-Path -LiteralPath $outDir -PathType Container)) { Stop-Tool "Folder not found: $outDir. Make the folders first (README, section 5)." }
 if (-not (Test-Path -LiteralPath $formatPath -PathType Leaf)) { Stop-Tool "card-format.md missing next to the script: $formatPath" }
 
 # Handoff: the newest one with the exact heading, not a video named under Skipped videos.
